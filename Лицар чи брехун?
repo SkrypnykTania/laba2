@@ -1,0 +1,54 @@
+# Загадка 0
+# А говорить: "Я є і лицар і брехун".
+knowledge0.add(
+    And(
+        Or(AKnight, AKnave),  # А є або лицарем, або брехуном
+        Not(And(AKnight, AKnave))  # А не може бути одночасно лицарем і брехуном
+    )
+)
+# Загадка 1
+# А говорить: "Ми обидва є брехунами".
+# Б мовчить.
+knowledge1.add(
+    And(
+        Or(AKnight, AKnave),  # А є або лицарем, або брехуном
+        Or(BKnight, BKnave),  # Б є або лицарем, або брехуном
+        If(AKnight, And(AKnave, BKnave)),  # Якщо А є лицар, то і А і Б є брехунами
+        If(AKnave, Not(And(AKnave, BKnave)))  # Якщо А є брехун, то А і Б не можуть бути обидва брехунами
+    )
+)
+
+# Загадка 2
+# А говорить: "Ми одного типу".
+# Б говорить: "Ми різних типів".
+knowledge2.add(
+    And(
+        Or(AKnight, AKnave),  # А є або лицарем, або брехуном
+        Or(BKnight, BKnave),  # Б є або лицарем, або брехуном
+        If(AKnight, Iff(AKnight, BKnight)),  # Якщо А є лицар, то А і Б одного типу
+        If(AKnave, Not(Iff(AKnave, BKnight))),  # Якщо А є брехун, то А і Б не одного типу
+        If(BKnight, Not(Iff(AKnight, BKnight))),  # Я
+)
+)
+# Загадка 3
+# А говорить: "Я є лицар, або я є брехун", але не відомо, яке саме.
+# Б говорить: "А сказав 'Я є брехун'".
+# Б потім говорить: "С є брехун".
+# С говорить: "А є лицар".
+knowledge3.add(
+    And(
+        Or(AKnight, AKnave),  # А є або лицарем, або брехуном
+        Or(BKnight, BKnave),  # Б є або лицарем, або брехуном
+        Or(CKnight, CKnave),  # С є або лицарем, або брехуном
+        Or(
+            And(AKnight, AKnightSentence),  # Якщо А є лицар, то А сказав "Я є лицар".
+            And(AKnave, Not(AKnightSentence))  # Якщо А є брехун, то А не сказав "Я є лицар".
+        ),
+        If(BKnight, Iff(AKnightSentence, BKnave)),  # Якщо Б є лицар, то А сказав "Я є брехун".
+        If(BKnave, Not(Iff(AKnightSentence, BKnave))),  # Якщо Б є брехун, то А не сказав "Я є брехун".
+        If(BKnight, CKnave),  # Якщо Б є лицар, то С є брехун.
+        If(BKnave, Not(CKnave)),  # Якщо Б є брехун, то С не є брехун.
+        If(CKnight, AKnight),  # Якщо С є лицар, то А є лицар.
+        If(CKnave, Not(AKnight))  # Якщо С є брехун, то А не є лицар.
+    )
+)
